@@ -80,9 +80,13 @@ class Daemon(object):
         pid = str(os.getpid())
         with open(self._pidfile, "w+") as f:
             f.write("%s\n" % pid)
-        if os.path.exists("/var/lock/subsys"):
-            with open(os.path.join("/var/lock/subsys", self._serviceName), "w") as f:
-                pass
+        try:
+            if os.path.exists("/var/lock/subsys"):
+                with open(os.path.join("/var/lock/subsys", self._serviceName), "w") as f:
+                    pass
+        except Exception as e:
+            sys.stderr.write("Error: %s" % e)
+            sys.exit(1)
 
     def _delpid(self):
         if os.path.exists(self._pidfile):
